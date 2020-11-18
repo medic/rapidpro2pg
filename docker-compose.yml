@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  nodejs:
+    image: rapidpro-cht:1.0.0
+    container_name: rapidpro-cht
+    environment:
+      - pgUrl=postgres://couch2pg:secret=@localhost:5432/db'
+      - rapidProAuth=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    network_mode: "host"

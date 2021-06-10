@@ -1,0 +1,26 @@
+{
+  "name": "rapidpro2pg",
+  "version": "0.0.1",
+  "description": "Adapter that pulls data from RapidPro and makes it available in PostgreSQL for ease of analysis.",
+  "main": "src/index.js",
+  "dependencies": {
+    "loglevel": "^1.7.1",
+    "node-fetch": "^2.6.1",
+    "pg": "^8.6.0",
+    "pg-format": "^1.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/medic/rapidpro2pg.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/medic/rapidpro2pg/issues"
+  },
+  "homepage": "https://github.com/medic/rapidpro2pg#readme"
+}

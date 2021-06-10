@@ -7,8 +7,9 @@ PostgreSQL 9.4 and greater. The user passed in the postgres url needs to have fu
 ## Getting started
 1. Clone the repository
 2. Update environment variables and network mode in `docker-compose.yml`
-  - `pgUrl` is the postgres url
-  - `rapidProAuth` is the RapidPro API Token, without the prefix
+  - `POSTGRESQL_URL` is the PostgreSQL url
+  - `RAPIDPRO_URL` is the url of your RapidPro deployment  
+  - `RAPIDPRO_AUTH` is the RapidPro API Token, without the prefix
 3. Run `docker build -t "<version>" .`
 4. Run `docker-compose up`
 5. Run step 4 for subsequent updates
@@ -18,6 +19,7 @@ Currently, the adapter pulls, but not limited to the following data.
 1. Contacts
 2. Messages
 3. Runs
+4. Flows
 
 ## How it works
 1. Runs migrations in `/migrations` to create `rapidpro_contacts, rapidpro_messages, rapidpro_runs` tables and corresponding materialized views `useview_*`

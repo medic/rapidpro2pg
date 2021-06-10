@@ -17,7 +17,12 @@
     "type": "git",
     "url": "git+https://github.com/medic/rapidpro2pg.git"
   },
-  "author": "",
+  "keywords": [
+    "rapidro",
+    "pg",
+    "cht"
+  ],
+  "author": "Medic Mobile",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/medic/rapidpro2pg/issues"

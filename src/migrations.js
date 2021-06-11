@@ -1,4 +1,5 @@
 const Postgrator = require('postgrator');
+const log = require('loglevel');
 
 const run = (postgresUrl) => {
   const migrator = new Postgrator({
@@ -8,7 +9,12 @@ const run = (postgresUrl) => {
     schemaTable: 'rapidpro2pg_migrations'
   });
 
-  return migrator.migrate().then(console.log).catch(console.error);
+  return migrator
+    .migrate()
+    .catch(err => {
+      log.error('Error with migrations', err);
+      throw err;
+    });
 };
 
 module.exports = {

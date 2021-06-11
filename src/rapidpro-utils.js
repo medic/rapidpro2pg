@@ -13,7 +13,7 @@ const get = async (url) => {
   try {
     return res.json();
   } catch (err) {
-    log.error('Error when parsing response from RapidPro Endpoint', endpoint, err);
+    log.error('Error when parsing response from RapidPro Endpoint', url, err);
     throw err;
   }
 };

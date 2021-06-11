@@ -17,7 +17,7 @@ const syncEndpoints = async() => {
     'runs',
   ];
 
-  for (const endpoint in endpoints) {
+  for (const endpoint of endpoints) {
     try {
       await (require(`./endpoints/${endpoint}.js`)).sync();
     } catch (err) {

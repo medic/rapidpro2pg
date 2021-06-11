@@ -1,4 +1,5 @@
 const { Client } = require('pg');
+const format = require('pg-format');
 
 const env = require('./env');
 

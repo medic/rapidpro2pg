@@ -1,7 +1,10 @@
 const Postgrator = require('postgrator');
 const log = require('loglevel');
 
-const run = async (postgresUrl) => {
+const env = require('./env');
+
+const run = async () => {
+  const postgresUrl = env.getPostgresUrl();
   const migrator = new Postgrator({
     migrationDirectory: __dirname + '/refresh_matviews',
     driver: 'pg',

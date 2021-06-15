@@ -5,7 +5,7 @@ services:
     image: rapidpro-cht:1.0.0
     container_name: rapidpro-cht
     environment:
-      - POSTGRESQL_URL=postgres://couch2pg:secret=@localhost:5432/db'
+      - POSTGRESQL_URL='postgres://couch2pg:secret=@localhost:5432/db'
       - RAPIDPRO_URL=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
       - RAPIDPRO_AUTH=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     network_mode: "host"

@@ -1,7 +1,10 @@
 const Postgrator = require('postgrator');
 const log = require('loglevel');
 
-const run = (postgresUrl) => {
+const env = require('./env');
+
+const run = () => {
+  const postgresUrl = env.getPostgresUrl();
   const migrator = new Postgrator({
     migrationDirectory: __dirname + '/migrations',
     driver: 'pg',

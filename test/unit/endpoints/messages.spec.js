@@ -15,7 +15,7 @@ describe('messages endpoint sync', () => {
     await messagesSync.sync();
 
     expect(defaultSync.sync.callCount).to.equal(1);
-    expect(defaultSync.sync.args[0]).to.deep.equal(['messages', insertStmt]);
+    expect(defaultSync.sync.args[0]).to.deep.equal(['messages', insertStmt, 'id']);
   });
 
   it('should throw default sync errors', async () => {
@@ -27,7 +27,7 @@ describe('messages endpoint sync', () => {
     } catch (err) {
       expect(err).to.deep.equal({ error: true });
       expect(defaultSync.sync.callCount).to.equal(1);
-      expect(defaultSync.sync.args[0]).to.deep.equal(['messages', insertStmt]);
+      expect(defaultSync.sync.args[0]).to.deep.equal(['messages', insertStmt, 'id']);
     }
   });
 });

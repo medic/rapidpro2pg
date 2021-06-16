@@ -52,7 +52,7 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_messages AS
 );
 
 DROP INDEX IF EXISTS  useview_rapidpro_messages_uuid;
-CREATE UNIQUE INDEX IF NOT EXISTS useview_rapidpro_messages_uuid ON useview_rapidpro_messages USING btree (uuid);
+CREATE UNIQUE INDEX useview_rapidpro_messages_uuid ON useview_rapidpro_messages USING btree (uuid);
 
 ------------------------------------------------------------
 ----------------useview_rapidpro_runs
@@ -75,4 +75,4 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_runs AS
 );
 
 DROP INDEX IF EXISTS  useview_rapidpro_runs_uuid;
-CREATE UNIQUE INDEX IF NOT EXISTS useview_rapidpro_runs_uuid ON useview_rapidpro_runs USING btree (uuid);
+CREATE UNIQUE INDEX useview_rapidpro_runs_uuid ON useview_rapidpro_runs USING btree (uuid);

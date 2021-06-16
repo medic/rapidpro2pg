@@ -13,7 +13,7 @@ CREATE INDEX rapidpro_runs_doc_uuid ON rapidpro_runs ( (doc->>'uuid')  );
 ------------------------------------------------------------
 ----------------useview_rapidpro_contacts
 ------------------------------------------------------------
-CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_contacts AS
+CREATE MATERIALIZED VIEW useview_rapidpro_contacts AS
 (
 	SELECT
 		doc->>'uuid'::TEXT AS uuid,
@@ -33,7 +33,7 @@ CREATE UNIQUE INDEX useview_rapidpro_contacts_uuid ON useview_rapidpro_contacts 
 ------------------------------------------------------------
 ----------------useview_rapidpro_messages
 ------------------------------------------------------------
-CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_messages AS
+CREATE MATERIALIZED VIEW useview_rapidpro_messages AS
 (
 	SELECT
 		doc->>'id'::TEXT AS uuid,
@@ -57,7 +57,7 @@ CREATE UNIQUE INDEX useview_rapidpro_messages_uuid ON useview_rapidpro_messages 
 ------------------------------------------------------------
 ----------------useview_rapidpro_runs
 ------------------------------------------------------------
-CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_runs AS
+CREATE MATERIALIZED VIEW useview_rapidpro_runs AS
 (
 	SELECT
 		doc->>'id'::TEXT AS uuid,

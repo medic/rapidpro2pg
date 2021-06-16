@@ -33,7 +33,7 @@ describe('pg-utils', () => {
 
   describe('upsert', () => {
     it('should upsert docs', async () => {
-      const dbName = 'contacts';
+      const insertStmt = 'INSERT INTO contacts (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc';
       const docs = ['a', 'b', 'c'];
       env.getPostgresUrl.returns('postgres:something:something');
       format.returns('formatted sql statement');
@@ -41,11 +41,11 @@ describe('pg-utils', () => {
       pgClient.query.resolves();
       pgClient.end.resolves();
 
-      await pgUtils.upsert(dbName, docs);
+      await pgUtils.upsert(insertStmt, docs);
 
       expect(format.callCount).to.equal(1);
       expect(format.args[0]).to.deep.equal([
-        'INSERT INTO contacts (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc',
+        insertStmt,
         ['a', 'b', 'c'],
       ]);
       expect(pgClientConstructor.callCount).to.equal(1);
@@ -57,20 +57,34 @@ describe('pg-utils', () => {
       expect(pgClient.end.callCount).to.equal(1);
     });
 
+    it('should do nothing when no docs are passed', async () => {
+      const insertStmt = 'INSERT INTO contacts (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc';
+      const docs = [];
+      env.getPostgresUrl.returns('postgres:something:something');
+
+      await pgUtils.upsert(insertStmt, docs);
+
+      expect(format.callCount).to.equal(0);
+      expect(pgClientConstructor.callCount).to.equal(0);
+      expect(pgClient.connect.callCount).to.equal(0);
+      expect(pgClient.query.callCount).to.equal(0);
+      expect(pgClient.end.callCount).to.equal(0);
+    });
+
     it('should throw format errors', async () => {
-      const dbName = 'flows';
+      const insertStmt = 'INSERT INTO flows (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc';
       const docs = [1, 2, 3];
 
       format.throws({ an: 'error' });
 
       try {
-        await pgUtils.upsert(dbName, docs);
+        await pgUtils.upsert(insertStmt, docs);
         assert.fail('should have thrown');
       } catch (err) {
         expect(err).to.deep.equal({ an: 'error' });
         expect(format.callCount).to.equal(1);
         expect(format.args[0]).to.deep.equal([
-          'INSERT INTO flows (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc',
+          insertStmt,
           [1, 2, 3],
         ]);
         expect(pgClientConstructor.callCount).to.equal(0);
@@ -81,7 +95,7 @@ describe('pg-utils', () => {
     });
 
     it('should throw connection errors', async () => {
-      const dbName = 'runs';
+      const insertStmt = 'INSERT INTO runs (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc';
       const docs = ['a', 'b', 'c'];
 
       env.getPostgresUrl.returns('postgres:uri');
@@ -89,13 +103,13 @@ describe('pg-utils', () => {
       pgClient.connect.rejects({ some: 'error' });
 
       try {
-        await pgUtils.upsert(dbName, docs);
+        await pgUtils.upsert(insertStmt, docs);
         assert.fail('should have thrown');
       } catch (err) {
         expect(err).to.deep.equal({ some: 'error' });
         expect(format.callCount).to.equal(1);
         expect(format.args[0]).to.deep.equal([
-          'INSERT INTO runs (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc',
+          insertStmt,
           ['a', 'b', 'c'],
         ]);
         expect(pgClientConstructor.callCount).to.equal(1);
@@ -108,7 +122,7 @@ describe('pg-utils', () => {
     });
 
     it('should throw query errors', async () => {
-      const dbName = 'thing';
+      const insertStmt = 'INSERT INTO thing (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc';
       const docs = ['a', 'b', 'c'];
 
       env.getPostgresUrl.returns('the host');
@@ -117,13 +131,13 @@ describe('pg-utils', () => {
       pgClient.query.rejects({ some: 'error' });
 
       try {
-        await pgUtils.upsert(dbName, docs);
+        await pgUtils.upsert(insertStmt, docs);
         assert.fail('should have thrown');
       } catch (err) {
         expect(err).to.deep.equal({ some: 'error' });
         expect(format.callCount).to.equal(1);
         expect(format.args[0]).to.deep.equal([
-          'INSERT INTO thing (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc',
+          insertStmt,
           ['a', 'b', 'c'],
         ]);
         expect(pgClientConstructor.callCount).to.equal(1);

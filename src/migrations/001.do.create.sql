@@ -10,10 +10,6 @@ CREATE TABLE IF NOT EXISTS rapidpro_runs (uuid uuid PRIMARY KEY, doc jsonb);
 DROP INDEX IF EXISTS  rapidpro_runs_doc_uuid;
 CREATE INDEX rapidpro_runs_doc_uuid ON rapidpro_runs ( (doc->>'uuid')  );
 
-ALTER TABLE rapidpro_contacts OWNER TO full_access;
-ALTER TABLE rapidpro_messages OWNER TO full_access;
-ALTER TABLE rapidpro_runs OWNER TO full_access;
-
 ------------------------------------------------------------
 ----------------useview_rapidpro_contacts
 ------------------------------------------------------------
@@ -33,9 +29,6 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_contacts AS
 
 DROP INDEX IF EXISTS  useview_rapidpro_contacts_uuid;
 CREATE UNIQUE INDEX IF NOT EXISTS useview_rapidpro_contacts_uuid ON useview_rapidpro_contacts USING btree (uuid);
-
-ALTER MATERIALIZED VIEW useview_rapidpro_contacts OWNER TO full_access;
-GRANT SELECT ON useview_rapidpro_contacts TO full_access,klipfolio;
 
 ------------------------------------------------------------
 ----------------useview_rapidpro_messages
@@ -61,9 +54,6 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_messages AS
 DROP INDEX IF EXISTS  useview_rapidpro_messages_uuid;
 CREATE UNIQUE INDEX IF NOT EXISTS useview_rapidpro_messages_uuid ON useview_rapidpro_messages USING btree (uuid);
 
-ALTER MATERIALIZED VIEW useview_rapidpro_messages OWNER TO full_access;
-GRANT SELECT ON useview_rapidpro_messages TO full_access,klipfolio;
-
 ------------------------------------------------------------
 ----------------useview_rapidpro_runs
 ------------------------------------------------------------
@@ -86,6 +76,3 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_runs AS
 
 DROP INDEX IF EXISTS  useview_rapidpro_runs_uuid;
 CREATE UNIQUE INDEX IF NOT EXISTS useview_rapidpro_runs_uuid ON useview_rapidpro_runs USING btree (uuid);
-
-ALTER MATERIALIZED VIEW useview_rapidpro_runs OWNER TO full_access;
-GRANT SELECT ON useview_rapidpro_runs TO full_access,klipfolio;

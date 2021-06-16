@@ -7,10 +7,10 @@ jobs:
     name: Build couch2pg
     runs-on: ubuntu-18.04
     env:
-      INT_COUCHDB_URL: http://localhost:5984/rapidpro2pg-test
       INT_PG_PASS: postgrespass
-      INT_PG_USER: postgresuser
-      INT_PG_DB: medic-analytics-test
+      INT_PG_USER: postgres
+      INT_PG_DB: rapidpro2pgtest
+      ING_RP_PORT: 6594
 
     services:
       postgres:
@@ -38,9 +38,5 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Set up CouchDB
-        uses: "cobot/couchdb-action@11e2c9f532a0eee2516ff80d92990d8081f2792c"
-        with:
-          couchdb version: '2.3.1'
       - run: npm ci
       - run: npm test

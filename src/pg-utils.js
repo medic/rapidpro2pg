@@ -11,14 +11,17 @@ const runSQL = async (sql) => {
   await pg.end();
 };
 
-const upsert = async (dbName, docs) => {
+const upsert = async (insertStmt, docs) => {
+  if (!docs.length) {
+    return Promise.resolve();
+  }
+
   let sql;
   try {
-    const INSERT_STMT = `INSERT INTO ${dbName} (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc`;
-    sql = format(INSERT_STMT, docs);
+    sql = format(insertStmt, docs);
     await runSQL(sql);
   } catch (err) {
-    log.error('Error while executing postgres query', err);
+    log.error('Error while executing postgres query', insertStmt, err);
     throw err;
   }
 };

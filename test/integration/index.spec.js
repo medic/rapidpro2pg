@@ -19,6 +19,12 @@ const env = {
   POSTGRESQL_URL: postgresUrl,
 };
 
+const pgConnect = async () => {
+  const pg = new Client({ connectionString: postgresUrl });
+  await pg.connect();
+  return pg;
+}
+
 const resetPg = async () => {
   const pg = await pgConnect();
   await pg.query('drop schema public cascade');
@@ -59,20 +65,14 @@ const run = () => {
   });
 };
 
-const pgConnect = async () => {
-  const pg = new Client({ connectionString: postgresUrl });
-  await pg.connect();
-  return pg;
-};
-
-const getAllPgRecords = async (pg, table) => {
+const getAllPgRecords = async (table) => {
+  const pg = await pgConnect();
   const result = await pg.query(`select * from ${table}`);
+  await pg.end();
   return result.rows;
 };
 
 describe('rapidpro2pg', () => {
-  let pg;
-
   const contactsResponses = [
     {
       previous: null,
@@ -136,10 +136,6 @@ describe('rapidpro2pg', () => {
   ];
 
   describe('basic tests', () => {
-    beforeEach(async () => {
-      pg = await pgConnect();
-    });
-
     afterEach(async () => {
       rapidProMockServer.stop();
     });
@@ -159,7 +155,7 @@ describe('rapidpro2pg', () => {
       it('should have synced contacts', async () => {
         const expectedContacts = getExpectedDocs(contactsResponses, 'uuid');
 
-        const contacts = await getAllPgRecords(pg, 'rapidpro_contacts');
+        const contacts = await getAllPgRecords('rapidpro_contacts');
         expect(contacts.length).to.equal(5);
         expect(contacts).to.have.deep.members(expectedContacts);
       });
@@ -167,7 +163,7 @@ describe('rapidpro2pg', () => {
       it('should have synced messages', async () => {
         const expectedMessages = getExpectedDocs(messagesResponses, 'id');
 
-        const messages = await getAllPgRecords(pg, 'rapidpro_messages');
+        const messages = await getAllPgRecords('rapidpro_messages');
         expect(messages.length).to.equal(4);
         expect(messages).to.have.deep.members(expectedMessages);
       });
@@ -175,7 +171,7 @@ describe('rapidpro2pg', () => {
       it('should have synced runs', async () => {
         const expectedRuns = getExpectedDocs(runsResponses, 'uuid');
 
-        const runs = await getAllPgRecords(pg, 'rapidpro_runs');
+        const runs = await getAllPgRecords('rapidpro_runs');
         expect(runs.length).to.equal(4);
         expect(runs).to.have.deep.members(expectedRuns);
       });
@@ -196,7 +192,7 @@ describe('rapidpro2pg', () => {
       it('should have synced contacts', async () => {
         const expectedContacts = getExpectedDocs(contactsResponses, 'uuid');
 
-        const contacts = await getAllPgRecords(pg, 'rapidpro_contacts');
+        const contacts = await getAllPgRecords('rapidpro_contacts');
         expect(contacts.length).to.equal(5);
         expect(contacts).to.have.deep.members(expectedContacts);
       });
@@ -204,7 +200,7 @@ describe('rapidpro2pg', () => {
       it('should have synced messages', async () => {
         const expectedMessages = getExpectedDocs(messagesResponses, 'id');
 
-        const messages = await getAllPgRecords(pg, 'rapidpro_messages');
+        const messages = await getAllPgRecords('rapidpro_messages');
         expect(messages.length).to.equal(4);
         expect(messages).to.have.deep.members(expectedMessages);
       });
@@ -212,7 +208,7 @@ describe('rapidpro2pg', () => {
       it('should have synced runs', async () => {
         const expectedRuns = getExpectedDocs(runsResponses, 'uuid');
 
-        const runs = await getAllPgRecords(pg, 'rapidpro_runs');
+        const runs = await getAllPgRecords('rapidpro_runs');
         expect(runs.length).to.equal(4);
         expect(runs).to.have.deep.members(expectedRuns);
       });
@@ -230,7 +226,7 @@ describe('rapidpro2pg', () => {
         rapidProMockServer.addResponses('contacts', ...updatedContactResponses);
 
         await run();
-        const contacts = await getAllPgRecords(pg, 'rapidpro_contacts');
+        const contacts = await getAllPgRecords('rapidpro_contacts');
         expect(contacts.length).to.equal(5);
         expect(contacts).to.have.deep.members(expectedContacts);
       });
@@ -242,7 +238,7 @@ describe('rapidpro2pg', () => {
         rapidProMockServer.addResponses('messages', ...updatedMessagesResponses);
 
         await run();
-        const messages = await getAllPgRecords(pg, 'rapidpro_messages');
+        const messages = await getAllPgRecords('rapidpro_messages');
         expect(messages.length).to.equal(4);
         expect(messages).to.have.deep.members(expectedMessages);
       });
@@ -254,7 +250,7 @@ describe('rapidpro2pg', () => {
         rapidProMockServer.addResponses('runs', ...updatedRunsResponses);
 
         await run();
-        const runs = await getAllPgRecords(pg, 'rapidpro_runs');
+        const runs = await getAllPgRecords('rapidpro_runs');
         expect(runs.length).to.equal(4);
         expect(runs).to.have.deep.members(expectedRuns);
         expect(runs.every(run => run.doc.edited)).to.equal(true);

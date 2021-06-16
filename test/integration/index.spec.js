@@ -47,7 +47,7 @@ const getExpectedDocs = (responses, key) => flatten(
 
 const run = () => {
   return new Promise((resolve, reject) => {
-    const childProcess = spawn('node', ['src/index.js'], { env, PATH: process.env.PATH });
+    const childProcess = spawn('node', ['src/index.js'], { env: { ...process.env, ...env } });
     childProcess.on('error', (err) => {
       logger.error('Error while running rapidpro2pg');
       reject(err);

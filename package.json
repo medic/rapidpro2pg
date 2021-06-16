@@ -13,8 +13,8 @@
   "devDependencies": {
     "@medic/eslint-config": "^1.1.0",
     "chai": "^4.3.4",
-    "eslint": "^7.28.0",
-    "mocha": "^9.0.0",
+    "eslint": "^6.8.0",
+    "mocha": "^7.2.0",
     "nyc": "^15.1.0",
     "rewire": "^5.0.0",
     "sinon": "^11.1.1"

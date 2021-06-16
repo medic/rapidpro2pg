@@ -4,7 +4,8 @@ const { expect, assert } = require('chai');
 const defaultSync = require('../../../src/endpoints/sync-endpoint');
 const contactsSync = require('../../../src/endpoints/contacts');
 
-const insertStmt = 'INSERT INTO rapidpro_contacts (uuid, doc) VALUES %L ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc';
+const insertStmt =
+        'INSERT INTO rapidpro_contacts (uuid, doc) VALUES %L ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc';
 
 describe('contacts endpoint sync', () => {
   afterEach(() => sinon.restore());

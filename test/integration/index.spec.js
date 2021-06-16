@@ -2,6 +2,7 @@ const { expect } = require('chai');
 const { Client } = require('pg');
 const spawn = require('child_process').spawn;
 const uuid = require('uuid').v4;
+const logger = require('loglevel');
 
 const rapidProMockServer = require('./rapidpro-server-mock');
 
@@ -34,18 +35,20 @@ const logIt = (logFn) => {
   };
 };
 
-const getExpectedDocs = (responses, key) => flatten(responses.map(response => response.results.map(doc => ({ [key]: String(doc[key]), doc }))))
+const getExpectedDocs = (responses, key) => flatten(
+  responses.map(response => response.results.map(doc => ({ [key]: String(doc[key]), doc })))
+);
 
 const run = () => {
   return new Promise((resolve, reject) => {
     const childProcess = spawn('node', ['src/index.js'], { env });
     childProcess.on('error', (err) => {
-      console.error('Error while running rapidpro2pg');
+      logger.error('Error while running rapidpro2pg');
       reject(err);
     });
 
-    childProcess.stdout.on('data', logIt(console.debug));
-    childProcess.stderr.on('data', logIt(console.error));
+    childProcess.stdout.on('data', logIt(logger.debug));
+    childProcess.stderr.on('data', logIt(logger.error));
 
     childProcess.on('close', (exitCode) => {
       if (exitCode) {
@@ -118,16 +121,16 @@ describe('rapidpro2pg', () => {
       previous: null,
       next: rapidProMockServer.getUrl('runs', '?next1'),
       results: [
-        { uuid: uuid(), id: 1, flow: { uuid: 'flow1', name: 'flow one' }, contact: { uuid: 'contact1', name: 'contact one' } },
-        { uuid: uuid(), id: 2, flow: { uuid: 'flow1', name: 'flow one' }, contact: { uuid: 'contact1', name: 'contact one' } },
+        { uuid: uuid(), id: 1, flow: { uuid: 'flow1', name: 'flow one' }, contact: { uuid: 'contact1', name: 'one' } },
+        { uuid: uuid(), id: 2, flow: { uuid: 'flow1', name: 'flow one' }, contact: { uuid: 'contact1', name: 'one' } },
       ],
     },
     {
       previous: rapidProMockServer.getUrl('runs', '?next1'),
       next: null,
       results: [
-        { uuid: uuid(), id: 3, flow: { uuid: 'flow2', name: 'flow two' }, contact: { uuid: 'contact3', name: 'contact three' } },
-        { uuid: uuid(), id: 4, flow: { uuid: 'flow2', name: 'flow two' }, contact: { uuid: 'contact3', name: 'contact three' } },
+        { uuid: uuid(), id: 3, flow: { uuid: 'flow2', name: 'flow two' }, contact: { uuid: 'c3', name: 'contact' } },
+        { uuid: uuid(), id: 4, flow: { uuid: 'flow2', name: 'flow two' }, contact: { uuid: 'c3', name: 'contact' } },
       ],
     },
   ];
@@ -207,7 +210,7 @@ describe('rapidpro2pg', () => {
       });
 
       it('should have synced runs', async () => {
-        const expectedRuns = getExpectedDocs(runsResponses, 'uuid')
+        const expectedRuns = getExpectedDocs(runsResponses, 'uuid');
 
         const runs = await getAllPgRecords(pg, 'rapidpro_runs');
         expect(runs.length).to.equal(4);

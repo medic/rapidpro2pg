@@ -3,8 +3,8 @@ name: Build rapidpro2pg and run test cases
 on: [push, pull_request]
 
 jobs:
-  build-and-test:
-    name: Build couch2pg
+  test:
+    name: Test rapidpro2pg
     runs-on: ubuntu-18.04
     env:
       INT_PG_PASS: postgrespass

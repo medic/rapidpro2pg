@@ -20,7 +20,7 @@ endpoints.forEach(endpoint => {
 
     res.json(response);
   });
-})
+});
 
 let server;
 module.exports.start = () => {

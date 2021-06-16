@@ -22,9 +22,13 @@ const syncEndpoints = async() => {
 };
 
 const run = async () => {
-  await migrations.run();
-  await syncEndpoints();
-  await refreshMatViews.run();
+  try {
+    await migrations.run();
+    await syncEndpoints();
+    await refreshMatViews.run();
+  } catch (err) {
+    process.exit(1);
+  }
 };
 
 run();

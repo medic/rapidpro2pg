@@ -68,9 +68,14 @@ const run = () => {
 
 const getAllPgRecords = async (table) => {
   const pg = await pgConnect();
-  const result = await pg.query(`select * from ${table}`);
-  await pg.end();
-  return result.rows;
+  try {
+    const result = await pg.query(`select * from ${table}`);
+    await pg.end();
+    return result.rows;
+  } catch (err) {
+    await pg.end();
+    throw err;
+  }
 };
 
 describe('rapidpro2pg', () => {

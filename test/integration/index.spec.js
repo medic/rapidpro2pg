@@ -23,7 +23,7 @@ const pgConnect = async () => {
   const pg = new Client({ connectionString: postgresUrl });
   await pg.connect();
   return pg;
-}
+};
 
 const resetPg = async () => {
   const pg = await pgConnect();
@@ -47,7 +47,8 @@ const getExpectedDocs = (responses, key) => flatten(
 
 const run = () => {
   return new Promise((resolve, reject) => {
-    const childProcess = spawn('node', ['src/index.js'], { env: { ...process.env, ...env } });
+
+    const childProcess = spawn('node', ['src/index.js'], { env: Object.assign({}, process.env, env)});
     childProcess.on('error', (err) => {
       logger.error('Error while running rapidpro2pg');
       reject(err);

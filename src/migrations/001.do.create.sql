@@ -13,7 +13,7 @@ CREATE INDEX rapidpro_runs_doc_uuid ON rapidpro_runs ( (doc->>'uuid')  );
 ------------------------------------------------------------
 ----------------useview_rapidpro_contacts
 ------------------------------------------------------------
-CREATE MATERIALIZED VIEW useview_rapidpro_contacts AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_contacts AS
 (
 	SELECT
 		doc->>'uuid'::TEXT AS uuid,
@@ -28,12 +28,12 @@ CREATE MATERIALIZED VIEW useview_rapidpro_contacts AS
 );
 
 DROP INDEX IF EXISTS  useview_rapidpro_contacts_uuid;
-CREATE UNIQUE INDEX useview_rapidpro_contacts_uuid ON useview_rapidpro_contacts USING btree (uuid);
+CREATE UNIQUE INDEX IF NOT EXISTS useview_rapidpro_contacts_uuid ON useview_rapidpro_contacts USING btree (uuid);
 
 ------------------------------------------------------------
 ----------------useview_rapidpro_messages
 ------------------------------------------------------------
-CREATE MATERIALIZED VIEW useview_rapidpro_messages AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_messages AS
 (
 	SELECT
 		doc->>'id'::TEXT AS uuid,
@@ -52,12 +52,12 @@ CREATE MATERIALIZED VIEW useview_rapidpro_messages AS
 );
 
 DROP INDEX IF EXISTS  useview_rapidpro_messages_uuid;
-CREATE UNIQUE INDEX useview_rapidpro_messages_uuid ON useview_rapidpro_messages USING btree (uuid);
+CREATE UNIQUE INDEX IF NOT EXISTS useview_rapidpro_messages_uuid ON useview_rapidpro_messages USING btree (uuid);
 
 ------------------------------------------------------------
 ----------------useview_rapidpro_runs
 ------------------------------------------------------------
-CREATE MATERIALIZED VIEW useview_rapidpro_runs AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS useview_rapidpro_runs AS
 (
 	SELECT
 		doc->>'id'::TEXT AS uuid,
@@ -75,4 +75,4 @@ CREATE MATERIALIZED VIEW useview_rapidpro_runs AS
 );
 
 DROP INDEX IF EXISTS useview_rapidpro_runs_uuid;
-CREATE UNIQUE INDEX useview_rapidpro_runs_uuid ON useview_rapidpro_runs USING btree (uuid);
+CREATE UNIQUE INDEX IF NOT EXISTS useview_rapidpro_runs_uuid ON useview_rapidpro_runs USING btree (uuid);

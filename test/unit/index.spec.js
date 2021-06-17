@@ -58,5 +58,24 @@ describe('rapidPro2pg', () => {
     expect(syncContacts.sync.callCount).to.equal(1);
     expect(syncMessages.sync.callCount).to.equal(1);
   });
+
+  it('should catch errors and exit with error code', async () => {
+    env.validateEnv.returns(true);
+    migrations.run.rejects({ some: 'error' });
+    rewire('../../src/index');
+
+    await nextTick();
+
+    expect(env.validateEnv.callCount).to.equal(1);
+    expect(migrations.run.callCount).to.equal(1);
+
+    expect(process.exit.callCount).to.equal(1);
+    expect(process.exit.args[0]).to.deep.equal([1]);
+
+    expect(refreshMatViews.run.callCount).to.equal(0);
+    expect(syncRuns.sync.callCount).to.equal(0);
+    expect(syncContacts.sync.callCount).to.equal(0);
+    expect(syncMessages.sync.callCount).to.equal(0);
+  });
 });
 

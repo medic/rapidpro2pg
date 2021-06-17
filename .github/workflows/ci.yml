@@ -10,7 +10,7 @@ jobs:
       INT_PG_PASS: postgrespass
       INT_PG_USER: postgres
       INT_PG_DB: rapidpro2pgtest
-      ING_RP_PORT: 6594
+      INT_RP_PORT: 6594
 
     services:
       postgres:

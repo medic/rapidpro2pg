@@ -1,4 +1,5 @@
 const log = require('loglevel');
+const { URL } = require('url');
 
 const RAPIDPRO_URL = 'RAPIDPRO_URL';
 const RAPIDPRO_AUTH = 'RAPIDPRO_AUTH';

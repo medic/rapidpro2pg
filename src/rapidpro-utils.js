@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const log = require('loglevel');
+const { URL } = require('url');
 
 const env = require('./env');
 

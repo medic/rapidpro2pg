@@ -7,8 +7,20 @@ const env = require('./env');
 const runSQL = async (sql) => {
   const pg = new Client({ connectionString: env.getPostgresUrl() });
   await pg.connect();
-  await pg.query(sql);
+  const result = await pg.query(sql);
   await pg.end();
+  return result;
+};
+
+const query = async (stmt, ...args) => {
+  let sql;
+  try {
+    sql = format(stmt, ...args);
+    return runSQL(sql);
+  } catch (err) {
+    log.error('Error while executing postgres query', stmt, err);
+    throw err;
+  }
 };
 
 const upsert = async (insertStmt, docs) => {
@@ -16,16 +28,10 @@ const upsert = async (insertStmt, docs) => {
     return Promise.resolve();
   }
 
-  let sql;
-  try {
-    sql = format(insertStmt, docs);
-    await runSQL(sql);
-  } catch (err) {
-    log.error('Error while executing postgres query', insertStmt, err);
-    throw err;
-  }
+  return query(insertStmt, docs);
 };
 
 module.exports = {
   upsert,
+  query,
 };

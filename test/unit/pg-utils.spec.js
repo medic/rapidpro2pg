@@ -150,4 +150,116 @@ describe('pg-utils', () => {
       }
     });
   });
+
+  describe('query', () => {
+    it('should execute query with all params', async () => {
+      const queryStmt = 'someQuery';
+      const params = ['a', 1, 'b', 2];
+      env.getPostgresUrl.returns('postgres:something:something');
+      format.returns('formatted sql statement');
+      pgClient.connect.resolves();
+      pgClient.query.resolves();
+      pgClient.end.resolves();
+
+      await pgUtils.query(queryStmt, ...params);
+
+      expect(format.callCount).to.equal(1);
+      expect(format.args[0]).to.deep.equal([ queryStmt, 'a', 1, 'b', 2 ]);
+      expect(pgClientConstructor.callCount).to.equal(1);
+      expect(pgClientConstructor.args[0]).to.deep.equal([{ connectionString: 'postgres:something:something' }]);
+
+      expect(pgClient.connect.callCount).to.equal(1);
+      expect(pgClient.query.callCount).to.equal(1);
+      expect(pgClient.query.args[0]).to.deep.equal(['formatted sql statement']);
+      expect(pgClient.end.callCount).to.equal(1);
+    });
+
+    it('should execute query with no params', async () => {
+      const queryStmt = 'someQuery';
+      env.getPostgresUrl.returns('postgres:something:something');
+      format.returns('formatted sql statement');
+      pgClient.connect.resolves();
+      pgClient.query.resolves();
+      pgClient.end.resolves();
+
+      await pgUtils.query(queryStmt);
+
+      expect(format.callCount).to.equal(1);
+      expect(format.args[0]).to.deep.equal([ queryStmt ]);
+      expect(pgClientConstructor.callCount).to.equal(1);
+      expect(pgClientConstructor.args[0]).to.deep.equal([{ connectionString: 'postgres:something:something' }]);
+
+      expect(pgClient.connect.callCount).to.equal(1);
+      expect(pgClient.query.callCount).to.equal(1);
+      expect(pgClient.query.args[0]).to.deep.equal(['formatted sql statement']);
+      expect(pgClient.end.callCount).to.equal(1);
+    });
+
+    it('should throw format errors', async () => {
+      const stmt = 'somestmt';
+
+      format.throws({ an: 'error' });
+
+      try {
+        await pgUtils.query(stmt, 1, 2, 3);
+        assert.fail('should have thrown');
+      } catch (err) {
+        expect(err).to.deep.equal({ an: 'error' });
+        expect(format.callCount).to.equal(1);
+        expect(format.args[0]).to.deep.equal([ stmt, 1, 2, 3 ]);
+        expect(pgClientConstructor.callCount).to.equal(0);
+        expect(pgClient.connect.callCount).to.equal(0);
+        expect(pgClient.query.callCount).to.equal(0);
+        expect(pgClient.end.callCount).to.equal(0);
+      }
+    });
+
+    it('should throw connection errors', async () => {
+      const stmt = 'statement';
+
+      env.getPostgresUrl.returns('postgres:uri');
+      format.returns('formatted sql statement');
+      pgClient.connect.rejects({ some: 'error' });
+
+      try {
+        await pgUtils.query(stmt);
+        assert.fail('should have thrown');
+      } catch (err) {
+        expect(err).to.deep.equal({ some: 'error' });
+        expect(format.callCount).to.equal(1);
+        expect(format.args[0]).to.deep.equal([ stmt ]);
+        expect(pgClientConstructor.callCount).to.equal(1);
+        expect(pgClientConstructor.args[0]).to.deep.equal([{ connectionString: 'postgres:uri' }]);
+
+        expect(pgClient.connect.callCount).to.equal(1);
+        expect(pgClient.query.callCount).to.equal(0);
+        expect(pgClient.end.callCount).to.equal(0);
+      }
+    });
+
+    it('should throw query errors', async () => {
+      const stmt = 'INSERT';
+
+      env.getPostgresUrl.returns('the host');
+      format.returns('statement');
+      pgClient.connect.resolves();
+      pgClient.query.rejects({ some: 'error' });
+
+      try {
+        await pgUtils.query(stmt);
+        assert.fail('should have thrown');
+      } catch (err) {
+        expect(err).to.deep.equal({ some: 'error' });
+        expect(format.callCount).to.equal(1);
+        expect(format.args[0]).to.deep.equal([ stmt ]);
+        expect(pgClientConstructor.callCount).to.equal(1);
+        expect(pgClientConstructor.args[0]).to.deep.equal([{ connectionString: 'the host' }]);
+
+        expect(pgClient.connect.callCount).to.equal(1);
+        expect(pgClient.query.callCount).to.equal(1);
+        expect(pgClient.query.args[0]).to.deep.equal(['statement']);
+        expect(pgClient.end.callCount).to.equal(0);
+      }
+    });
+  });
 });

@@ -1,14 +1,7 @@
 CREATE TABLE IF NOT EXISTS rapidpro_messages (id bigint PRIMARY KEY, doc jsonb);
-DROP INDEX IF EXISTS  rapidpro_messages_doc_id;
-CREATE INDEX rapidpro_messages_doc_id ON rapidpro_messages ( (doc->>'id')  );
-
 CREATE TABLE IF NOT EXISTS rapidpro_contacts (uuid uuid PRIMARY KEY, doc jsonb);
-DROP INDEX IF EXISTS  rapidpro_contacts_doc_uuid;
-CREATE INDEX rapidpro_contacts_doc_uuid ON rapidpro_messages ( (doc->>'uuid')  );
-
+CREATE TABLE IF NOT EXISTS rapidpro_runs_progress (source VARCHAR PRIMARY KEY, timestamp VARCHAR);
 CREATE TABLE IF NOT EXISTS rapidpro_runs (uuid uuid PRIMARY KEY, doc jsonb);
-DROP INDEX IF EXISTS  rapidpro_runs_doc_uuid;
-CREATE INDEX rapidpro_runs_doc_uuid ON rapidpro_runs ( (doc->>'uuid')  );
 
 ------------------------------------------------------------
 ----------------useview_rapidpro_contacts

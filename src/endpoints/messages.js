@@ -1,15 +1,21 @@
 const log = require('loglevel');
 
-const defaultSync = require('./sync-endpoint');
+const utils = require('./utils');
+const pgUtils = require('../pg-utils');
 
 const ENDPOINT_NAME = 'messages';
-const INSERT_STMT =
-        'INSERT INTO rapidpro_messages (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc';
+const UPSERT_ST = `INSERT INTO rapidpro_messages (id, doc) VALUES %L ON CONFLICT(id) DO UPDATE SET doc = EXCLUDED.doc`;
+
+const upsert = (results) => {
+  const records = results.map(result => ([ result.id, JSON.stringify(result) ]));
+  return pgUtils.upsert(UPSERT_ST, records);
+};
+
 
 module.exports = {
   sync: async () => {
     try {
-      await defaultSync.sync(ENDPOINT_NAME, INSERT_STMT, 'id');
+      await utils.sync(ENDPOINT_NAME, upsert);
     } catch (err) {
       log.error('Error when syncing messages', err);
       throw err;

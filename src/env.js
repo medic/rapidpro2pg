@@ -10,9 +10,19 @@ const requiredEnv = [RAPIDPRO_URL, RAPIDPRO_AUTH, POSTGRESQL_URL];
 
 const validateEnv = () => {
   const errors = requiredEnv.filter(prop => {
-    if (!getEnv(prop)) {
+    const value = getEnv(prop);
+    if (!value) {
       log.error(`${prop} is required. Please run --usage to see required params`);
       return true;
+    }
+
+    if (prop === RAPIDPRO_URL) {
+      try {
+        new URL(value);
+      } catch (err) {
+        log.error(`${prop} is not a valid URL. `);
+        return true;
+      }
     }
   });
   return !errors.length;

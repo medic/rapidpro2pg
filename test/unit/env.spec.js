@@ -58,5 +58,13 @@ describe('env', () => {
 
       expect(env.validateEnv()).to.equal(false);
     });
+
+    it('should return false for invalid rapidpro url', () => {
+      processObject.env.RAPIDPRO_URL = 'not_url';
+      processObject.env.RAPIDPRO_AUTH = 'omg token';
+      processObject.env.POSTGRESQL_URL = 'postgres://couch2pg:secret=@localhost:5432/db';
+
+      expect(env.validateEnv()).to.equal(false);
+    });
   });
 });

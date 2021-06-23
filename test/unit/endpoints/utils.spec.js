@@ -2,10 +2,9 @@ const sinon = require('sinon');
 const { expect, assert } = require('chai');
 
 const rapidProUtils = require('../../../src/rapidpro-utils');
-const pgUtils = require('../../../src/pg-utils');
-const syncEndpoint = require('../../../src/endpoints/sync-endpoint');
+const utils = require('../../../src/endpoints/utils');
 
-describe('sync endpoint', () => {
+describe('endpoint utils', () => {
   afterEach(() => {
     sinon.restore();
   });
@@ -23,22 +22,21 @@ describe('sync endpoint', () => {
         next: null,
         previous: null,
       });
-      sinon.stub(pgUtils, 'upsert').resolves();
+      const upsert = sinon.stub();
 
-      await syncEndpoint.sync('theEndpoint', 'theDbName');
+      await utils.sync('theEndpoint', upsert);
 
       expect(rapidProUtils.getApiUri.callCount).to.equal(1);
-      expect(rapidProUtils.getApiUri.args[0]).to.deep.equal(['theEndpoint']);
+      expect(rapidProUtils.getApiUri.args[0]).to.deep.equal(['theEndpoint', '']);
       expect(rapidProUtils.get.callCount).to.equal(1);
       expect(rapidProUtils.get.args[0]).to.deep.equal(['http://rapid.pro/api/v1/theEndpoint']);
-      expect(pgUtils.upsert.callCount).to.equal(1);
-      expect(pgUtils.upsert.args[0]).to.deep.equal([
-        'theDbName',
+      expect(upsert.callCount).to.equal(1);
+      expect(upsert.args[0]).to.deep.equal([
         [
-          ['123', JSON.stringify({ uuid: '123', data: 'a', extra: 'b' })],
-          ['456', JSON.stringify({ uuid: '456', data: 'aa', extra: 'bb' })],
-          ['789', JSON.stringify({ uuid: '789', data: 'aaa', extra: 'bbb' })],
-          ['101112', JSON.stringify({ uuid: '101112', data: 'aaaa', extra: 'bbbb' })],
+          { uuid: '123', data: 'a', extra: 'b' },
+          { uuid: '456', data: 'aa', extra: 'bb' },
+          { uuid: '789', data: 'aaa', extra: 'bbb' },
+          { uuid: '101112', data: 'aaaa', extra: 'bbbb' },
         ]
       ]);
     });
@@ -66,12 +64,12 @@ describe('sync endpoint', () => {
           next: null,
           previous: 'http://rapid.pro/api/v1/edp?p=4',
         });
-      sinon.stub(pgUtils, 'upsert').resolves();
+      const upsert = sinon.stub().resolves();
 
-      await syncEndpoint.sync('edp', 'db');
+      await utils.sync('edp', upsert);
 
       expect(rapidProUtils.getApiUri.callCount).to.equal(1);
-      expect(rapidProUtils.getApiUri.args[0]).to.deep.equal(['edp']);
+      expect(rapidProUtils.getApiUri.args[0]).to.deep.equal(['edp', '']);
 
       expect(rapidProUtils.get.callCount).to.equal(4);
       expect(rapidProUtils.get.args).to.deep.equal([
@@ -80,12 +78,39 @@ describe('sync endpoint', () => {
         ['http://rapid.pro/api/v1/edp?p=3'],
         ['http://rapid.pro/api/v1/edp?p=4'],
       ]);
-      expect(pgUtils.upsert.callCount).to.equal(4);
-      expect(pgUtils.upsert.args).to.deep.equal([
-        ['db', [['123', JSON.stringify({ uuid: '123', data: 'a', extra: 'b' })]]],
-        ['db', [['456', JSON.stringify({ uuid: '456', data: 'aa', extra: 'bb' })]]],
-        ['db', [['789', JSON.stringify({ uuid: '789', data: 'aaa', extra: 'bbb' })]]],
-        ['db', [['101112', JSON.stringify({ uuid: '101112', data: 'aaaa', extra: 'bbbb' })]]],
+      expect(upsert.callCount).to.equal(4);
+      expect(upsert.args).to.deep.equal([
+        [[{ uuid: '123', data: 'a', extra: 'b' }]],
+        [[{ uuid: '456', data: 'aa', extra: 'bb' }]],
+        [[{ uuid: '789', data: 'aaa', extra: 'bbb' }]],
+        [[{ uuid: '101112', data: 'aaaa', extra: 'bbbb' }]],
+      ]);
+    });
+
+    it('should pass query params to get url', async () => {
+      sinon.stub(rapidProUtils, 'getApiUri').returns('http://rapid.pro/api/v1/edp?qs=true');
+      sinon.stub(rapidProUtils, 'get').resolves({
+        results: [
+          { uuid: '123', data: 'a', extra: 'b' },
+          { uuid: '456', data: 'aa', extra: 'bb' },
+        ],
+        next: null,
+        previous: null,
+      });
+      const upsert = sinon.stub().resolves();
+
+      await utils.sync('edp', upsert, 'qs=true');
+
+      expect(rapidProUtils.getApiUri.callCount).to.equal(1);
+      expect(rapidProUtils.getApiUri.args[0]).to.deep.equal(['edp', 'qs=true']);
+      expect(rapidProUtils.get.callCount).to.equal(1);
+      expect(rapidProUtils.get.args[0]).to.deep.equal(['http://rapid.pro/api/v1/edp?qs=true']);
+      expect(upsert.callCount).to.equal(1);
+      expect(upsert.args[0]).to.deep.equal([
+        [
+          { uuid: '123', data: 'a', extra: 'b' },
+          { uuid: '456', data: 'aa', extra: 'bb' },
+        ]
       ]);
     });
 
@@ -98,10 +123,10 @@ describe('sync endpoint', () => {
           previous: null,
         })
         .onCall(1).rejects({ some: 'err' });
-      sinon.stub(pgUtils, 'upsert').resolves();
+      const upsert = sinon.stub().resolves();
 
       try {
-        await syncEndpoint.sync('contacts', 'contacts_db');
+        await utils.sync('contacts', upsert);
         assert.fail('should have thrown');
       } catch (err) {
         expect(err).to.deep.equal({ some: 'err' });
@@ -109,10 +134,9 @@ describe('sync endpoint', () => {
         expect(rapidProUtils.get.callCount).to.equal(2);
         expect(rapidProUtils.get.args[0]).to.deep.equal(['http://rapid.pro/api/v1/contacts']);
         expect(rapidProUtils.get.args[1]).to.deep.equal(['http://rapid.pro/api/v1/contacts?page=2']);
-        expect(pgUtils.upsert.callCount).to.equal(1);
-        expect(pgUtils.upsert.args[0]).to.deep.equal([
-          'contacts_db',
-          [ ['uuid', JSON.stringify({ uuid: 'uuid', not_uuid: 54738593 })] ],
+        expect(upsert.callCount).to.equal(1);
+        expect(upsert.args[0]).to.deep.equal([
+          [ { uuid: 'uuid', not_uuid: 54738593 } ],
         ]);
       }
     });
@@ -130,12 +154,12 @@ describe('sync endpoint', () => {
           next: 'http://rapid.pro/api/v1/flows?page=3',
           previous: null,
         });
-      sinon.stub(pgUtils, 'upsert')
+      const upsert = sinon.stub()
         .onCall(0).resolves()
         .onCall(1).rejects({ some: 'other err' });
 
       try {
-        await syncEndpoint.sync('flows', 'flows_db');
+        await utils.sync('flows', upsert);
         assert.fail('should have thrown');
       } catch (err) {
         expect(err).to.deep.equal({ some: 'other err' });
@@ -143,15 +167,9 @@ describe('sync endpoint', () => {
         expect(rapidProUtils.get.callCount).to.equal(2);
         expect(rapidProUtils.get.args[0]).to.deep.equal(['http://rapid.pro/api/v1/flows']);
         expect(rapidProUtils.get.args[1]).to.deep.equal(['http://rapid.pro/api/v1/flows?page=2']);
-        expect(pgUtils.upsert.callCount).to.equal(2);
-        expect(pgUtils.upsert.args[0]).to.deep.equal([
-          'flows_db',
-          [ ['uuid', JSON.stringify({ uuid: 'uuid', not_uuid: 54738593 })] ],
-        ]);
-        expect(pgUtils.upsert.args[1]).to.deep.equal([
-          'flows_db',
-          [ ['other', JSON.stringify({ uuid: 'other', not_uuid: 78979 })] ],
-        ]);
+        expect(upsert.callCount).to.equal(2);
+        expect(upsert.args[0]).to.deep.equal([ [{ uuid: 'uuid', not_uuid: 54738593 }]]);
+        expect(upsert.args[1]).to.deep.equal([[ { uuid: 'other', not_uuid: 78979 } ]]);
       }
     });
   });

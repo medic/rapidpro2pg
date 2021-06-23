@@ -28,13 +28,13 @@ describe('rapidpro-utils', () => {
       env.getRapidProUrl.returns('https://rapid.pro');
 
       const contactsUrl = rapidProUtils.getApiUri('contacts');
-      expect(contactsUrl).to.equal('https://rapid.pro/api/v2/contacts.json');
+      expect(contactsUrl).to.equal('https://rapid.pro/api/v2/contacts.json?');
 
       const runsUrl = rapidProUtils.getApiUri('runs');
-      expect(runsUrl).to.equal('https://rapid.pro/api/v2/runs.json');
+      expect(runsUrl).to.equal('https://rapid.pro/api/v2/runs.json?');
 
       const flowsUrl = rapidProUtils.getApiUri('flows');
-      expect(flowsUrl).to.equal('https://rapid.pro/api/v2/flows.json');
+      expect(flowsUrl).to.equal('https://rapid.pro/api/v2/flows.json?');
     });
   });
 
@@ -90,6 +90,32 @@ describe('rapidpro-utils', () => {
           { method: 'GET', headers: { Authorization: 'Token not_token' } },
         ]);
         expect(res.json.callCount).to.equal(1);
+      }
+    });
+  });
+
+  describe('getSource', () => {
+    it('should return source', () => {
+      env.getRapidProUrl.returns('https://rapid.pro');
+      expect(rapidProUtils.getSource()).to.equal('rapid.pro/');
+
+      env.getRapidProUrl.returns('http://textit.in');
+      expect(rapidProUtils.getSource()).to.equal('textit.in/');
+
+      env.getRapidProUrl.returns('https://domain.ds/subfolder');
+      expect(rapidProUtils.getSource()).to.equal('domain.ds/subfolder');
+
+      env.getRapidProUrl.returns('https://subd.domain.ds/subfolder');
+      expect(rapidProUtils.getSource()).to.equal('subd.domain.ds/subfolder');
+    });
+
+    it('should throw error for incorrect URL', () => {
+      env.getRapidProUrl.returns(3);
+      try {
+        rapidProUtils.getSource();
+        assert.fail('should have thrown');
+      } catch(err) {
+        expect(err.code).to.equal('ERR_INVALID_URL');
       }
     });
   });

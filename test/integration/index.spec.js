@@ -48,13 +48,13 @@ const getExpectedDocs = (responses, key) => flatten(
 const run = () => {
   return new Promise((resolve, reject) => {
 
-    const childProcess = spawn('node', ['src/index.js'], { env: Object.assign({}, process.env, env)});
+    const childProcess = spawn('node', ['src/index.js'], { env: Object.assign({}, process.env, env), detached: true });
+    childProcess.unref();
     childProcess.on('error', (err) => {
       logger.error('Error while running rapidpro2pg');
       reject(err);
     });
-
-    childProcess.stdout.on('data', logIt(logger.debug));
+    childProcess.stdout.on('data', logIt(logger.info));
     childProcess.stderr.on('data', logIt(logger.error));
 
     childProcess.on('close', (exitCode) => {
@@ -127,16 +127,16 @@ describe('rapidpro2pg', () => {
       previous: null,
       next: rapidProMockServer.getUrl('runs', '?next1'),
       results: [
-        { uuid: uuid(), id: 1, flow: { uuid: 'flow1', name: 'flow one' }, contact: { uuid: 'contact1', name: 'one' } },
-        { uuid: uuid(), id: 2, flow: { uuid: 'flow1', name: 'flow one' }, contact: { uuid: 'contact1', name: 'one' } },
+        { uuid: uuid(), flow: { uuid: 'flow1', name: 'flow one' }, modified_on: '2020-01-01T12:12:12' },
+        { uuid: uuid(), flow: { uuid: 'flow1', name: 'flow one' }, modified_on: '2020-01-02T12:12:12' },
       ],
     },
     {
       previous: rapidProMockServer.getUrl('runs', '?next1'),
       next: null,
       results: [
-        { uuid: uuid(), id: 3, flow: { uuid: 'flow2', name: 'flow two' }, contact: { uuid: 'c3', name: 'contact' } },
-        { uuid: uuid(), id: 4, flow: { uuid: 'flow2', name: 'flow two' }, contact: { uuid: 'c3', name: 'contact' } },
+        { uuid: uuid(), flow: { uuid: 'flow2', name: 'flow two' }, modified_on: '2020-01-03T12:12:12' },
+        { uuid: uuid(), flow: { uuid: 'flow2', name: 'flow two' }, modified_on: '2020-01-04T12:12:12' },
       ],
     },
   ];
@@ -178,8 +178,13 @@ describe('rapidpro2pg', () => {
         const expectedRuns = getExpectedDocs(runsResponses, 'uuid');
 
         const runs = await getAllPgRecords('rapidpro_runs');
+
         expect(runs.length).to.equal(4);
         expect(runs).to.have.deep.members(expectedRuns);
+
+        const lastModifiedDate = await getAllPgRecords('rapidpro_runs_progress');
+        expect(lastModifiedDate.length).to.equal(1);
+        expect(lastModifiedDate[0]).to.deep.equal({ source: 'localhost:6594/', timestamp: '2020-01-04T12:12:12' });
       });
     });
 
@@ -217,6 +222,10 @@ describe('rapidpro2pg', () => {
         const runs = await getAllPgRecords('rapidpro_runs');
         expect(runs.length).to.equal(4);
         expect(runs).to.have.deep.members(expectedRuns);
+
+        const lastModifiedDate = await getAllPgRecords('rapidpro_runs_progress');
+        expect(lastModifiedDate.length).to.equal(1);
+        expect(lastModifiedDate[0]).to.deep.equal({ source: 'localhost:6594/', timestamp: '2020-01-04T12:12:12' });
       });
     });
 
@@ -251,7 +260,16 @@ describe('rapidpro2pg', () => {
 
       it('should update runs', async () => {
         const updatedRunsResponses = JSON.parse(JSON.stringify(runsResponses));
-        updatedRunsResponses.forEach(response => response.results.forEach(run => run.edited = true));
+        const modifiedOnArray = [
+          '2020-02-03T12:12:12',
+          '2020-03-05T12:12:12',
+          '2020-02-04T12:12:12',
+          '2020-03-04T12:12:12',
+        ];
+        updatedRunsResponses.forEach(response => response.results.forEach(run => {
+          run.edited = true;
+          run.modified_on = modifiedOnArray.pop();
+        }));
         const expectedRuns = getExpectedDocs(updatedRunsResponses, 'uuid');
         rapidProMockServer.addResponses('runs', ...updatedRunsResponses);
 
@@ -260,6 +278,10 @@ describe('rapidpro2pg', () => {
         expect(runs.length).to.equal(4);
         expect(runs).to.have.deep.members(expectedRuns);
         expect(runs.every(run => run.doc.edited)).to.equal(true);
+
+        const lastModifiedDate = await getAllPgRecords('rapidpro_runs_progress');
+        expect(lastModifiedDate.length).to.equal(1);
+        expect(lastModifiedDate[0]).to.deep.equal({ source: 'localhost:6594/', timestamp: '2020-03-05T12:12:12' });
       });
     });
   });

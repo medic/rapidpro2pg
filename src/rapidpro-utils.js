@@ -3,7 +3,7 @@ const log = require('loglevel');
 
 const env = require('./env');
 
-const getApiUri = (endpoint) => `${env.getRapidProUrl()}/api/v2/${endpoint}.json`;
+const getApiUri = (endpoint, queryString='') => `${env.getRapidProUrl()}/api/v2/${endpoint}.json?${queryString}`;
 
 const get = async (url) => {
   const headers = { Authorization: `Token ${env.getRapidProAuth()}` };
@@ -16,7 +16,14 @@ const get = async (url) => {
   }
 };
 
+const getSource = () => {
+  const url = env.getRapidProUrl();
+  const source = new URL(url);
+  return source.host + source.pathname;
+};
+
 module.exports = {
   getApiUri,
   get,
+  getSource,
 };

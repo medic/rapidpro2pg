@@ -1,4 +1,5 @@
 const log = require('loglevel');
+const { URLSearchParams } = require('url');
 
 const utils = require('./utils');
 const pgUtils = require('../pg-utils');

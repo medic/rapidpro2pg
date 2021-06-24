@@ -11,7 +11,7 @@
     "postgrator": "^4.1.1"
   },
   "bin": {
-    "rapidpro2pg": "src/index.js"
+    "rapidpro2pg": "bin/index.js"
   },
   "devDependencies": {
     "@medic/eslint-config": "^1.1.0",

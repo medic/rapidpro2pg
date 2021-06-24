@@ -49,10 +49,13 @@ const getExpectedNodes = (definitionsResponses) => {
   const expectedNodes = [];
   definitionsResponses.forEach(response => {
     response.flows.forEach(def => {
-      expectedNodes.push(...def.nodes.map(node => ({ uuid: node.uuid, doc: node, node_type: null })));
-      def._ui && def._ui.nodes && Object.keys(def._ui.nodes).map(uuid => {
-        const node = Object.assign({ uuid, node_type: 'ui' }, def._ui.nodes[uuid]);
-        expectedNodes.push({ uuid: node.uuid, node_type: node.node_type, doc: node });
+      def.nodes.forEach(node => {
+        const ui = def._ui && def._ui.nodes && def._ui.nodes[node.uuid];
+        const doc = Object.assign({}, node);
+        if (ui) {
+          doc.ui = ui;
+        }
+        expectedNodes.push({ uuid: node.uuid, doc }) ;
       });
     });
   });
@@ -174,6 +177,8 @@ describe('rapidpro2pg', () => {
     },
   ];
 
+  const uuids = Array.from({ length: 20 }).map(() => uuid());
+
   const definitionsResponses = [
     {
       version: '13',
@@ -193,13 +198,13 @@ describe('rapidpro2pg', () => {
           name: flowsResponses[0].results[1].name,
           type: 'flowtype1',
           nodes: [
-            { uuid: uuid(), actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
-            { uuid: uuid(), actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
+            { uuid: uuids[0], actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
+            { uuid: uuids[1], actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
           ],
           _ui: {
             nodes: {
-              [uuid()]: { type: 'type', position: { left: 1, right: 1 } },
-              [uuid()]: { type: 'other', position: { left: 1, right: 1 } },
+              [uuids[0]]: { type: 'type', position: { left: 1, right: 1 } },
+              [uuids[1]]: { type: 'other', position: { left: 1, right: 1 } },
             },
           },
           revision: 3,
@@ -216,15 +221,15 @@ describe('rapidpro2pg', () => {
           name: flowsResponses[1].results[0].name,
           type: 'flowtype1',
           nodes: [
-            { uuid: uuid(), actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
-            { uuid: uuid(), actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
-            { uuid: uuid(), actions: [{ uuid: uuid(), type: 't1' }], exits: [{ uuid: uuid() }] },
-            { uuid: uuid(), actions: [{ uuid: uuid(), type: 't2' }], exits: [{ uuid: uuid() }] },
+            { uuid: uuids[2], actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
+            { uuid: uuids[3], actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
+            { uuid: uuids[4], actions: [{ uuid: uuid(), type: 't1' }], exits: [{ uuid: uuid() }] },
+            { uuid: uuids[5], actions: [{ uuid: uuid(), type: 't2' }], exits: [{ uuid: uuid() }] },
           ],
           _ui: {
             nodes: {
-              [uuid()]: { type: 'wait_for_response', position: { left: 1, right: 1 } },
-              [uuid()]: { type: 'execute_actions', position: { left: 1, right: 1 } },
+              [uuids[2]]: { type: 'wait_for_response', position: { left: 1, right: 1 } },
+              [uuids[3]]: { type: 'execute_actions', position: { left: 1, right: 1 } },
             },
           },
           revision: 3,
@@ -235,13 +240,13 @@ describe('rapidpro2pg', () => {
           name: flowsResponses[1].results[1].name,
           type: 'flowtype2',
           nodes: [
-            { uuid: uuid(), actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
-            { uuid: uuid(), actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
+            { uuid: uuids[6], actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
+            { uuid: uuids[7], actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
           ],
           _ui: {
             nodes: {
-              [uuid()]: { type: 'split_by_webhook', position: { left: 1, right: 1 } },
-              [uuid()]: { type: 'split_by_expression', position: { left: 1, right: 1 } },
+              [uuids[6]]: { type: 'split_by_webhook', position: { left: 1, right: 1 } },
+              [uuids[7]]: { type: 'split_by_expression', position: { left: 1, right: 1 } },
             },
           },
           revision: 3,
@@ -491,8 +496,8 @@ describe('rapidpro2pg', () => {
               name: updatedFlowsResponses[2].results[0].name,
               type: 'flowtype1',
               nodes: [
-                { uuid: uuid(), actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
-                { uuid: uuid(), actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
+                { uuid: uuids[8], actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
+                { uuid: uuids[9], actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
               ],
               _ui: {
                 nodes: {},
@@ -505,13 +510,13 @@ describe('rapidpro2pg', () => {
               name: updatedFlowsResponses[2].results[1].name,
               type: 'flowtype2',
               nodes: [
-                { uuid: uuid(), actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
-                { uuid: uuid(), actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
+                { uuid: uuids[10], actions: [{ uuid: uuid(), type: 'type' }], exits: [{ uuid: uuid() }] },
+                { uuid: uuids[11], actions: [{ uuid: uuid(), type: 'othertype' }], exits: [{ uuid: uuid() }] },
               ],
               _ui: {
                 nodes: {
-                  [uuid()]: { type: 'split_by_webhook', position: { left: 1, right: 1 } },
-                  [uuid()]: { type: 'split_by_expression', position: { left: 1, right: 1 } },
+                  [uuids[10]]: { type: 'split_by_webhook', position: { left: 1, right: 1 } },
+                  [uuids[11]]: { type: 'split_by_expression', position: { left: 1, right: 1 } },
                 },
               },
               revision: 3,

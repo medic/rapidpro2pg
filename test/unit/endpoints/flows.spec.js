@@ -10,7 +10,7 @@ const flowsUpsertStmt = 'INSERT INTO rapidpro_flows (uuid, doc) VALUES %L ' +
                    'ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc';
 const definitionsUpsertStmt = 'INSERT INTO rapidpro_definitions (uuid, doc) VALUES %L ' +
                               'ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc';
-const nodesUpsertStmt = 'INSERT INTO rapidpro_definitions_nodes (uuid, node_type, doc) VALUES %L ' +
+const nodesUpsertStmt = 'INSERT INTO rapidpro_definitions_nodes (uuid, doc) VALUES %L ' +
                         'ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc';
 
 describe('flows and definitions endpoint sync', () => {
@@ -40,8 +40,8 @@ describe('flows and definitions endpoint sync', () => {
           ],
           _ui: {
             nodes: {
-              ui_node_1: { type: 'execute', position: [1, 2] },
-              ui_node_2: { type: 'split', position: [1, 2] },
+              node1: { type: 'execute', position: [1, 2] },
+              node2: { type: 'split', position: [1, 2] },
             }
           }
         },
@@ -54,8 +54,8 @@ describe('flows and definitions endpoint sync', () => {
           ],
           _ui: {
             nodes: {
-              ui_node_3: { type: 'wait', position: [1, 2] },
-              ui_node_4: { type: 'other', position: [1, 2] },
+              node3: { type: 'wait', position: [1, 2] },
+              node4: { type: 'other', position: [1, 2] },
             }
           },
         }
@@ -89,8 +89,8 @@ describe('flows and definitions endpoint sync', () => {
             ],
             _ui: {
               nodes: {
-                ui_node_1: { type: 'execute', position: [1, 2] },
-                ui_node_2: { type: 'split', position: [1, 2] },
+                node1: { type: 'execute', position: [1, 2] },
+                node2: { type: 'split', position: [1, 2] },
               }
             }
           }),
@@ -106,8 +106,8 @@ describe('flows and definitions endpoint sync', () => {
             ],
             _ui: {
               nodes: {
-                ui_node_3: { type: 'wait', position: [1, 2] },
-                ui_node_4: { type: 'other', position: [1, 2] },
+                node3: { type: 'wait', position: [1, 2] },
+                node4: { type: 'other', position: [1, 2] },
               }
             },
           }),
@@ -118,14 +118,10 @@ describe('flows and definitions endpoint sync', () => {
     expect(pgUtils.upsert.args[2]).to.deep.equal([
       nodesUpsertStmt,
       [
-        ['node1', undefined, JSON.stringify({ uuid: 'node1', some: 'data', node_type: undefined },)],
-        ['node2', undefined, JSON.stringify({ uuid: 'node2', some: 'data', node_type: undefined },)],
-        ['ui_node_1', 'ui', JSON.stringify({ uuid: 'ui_node_1', node_type: 'ui', type: 'execute', position: [1, 2] })],
-        ['ui_node_2', 'ui', JSON.stringify({ uuid: 'ui_node_2', node_type: 'ui', type: 'split', position: [1, 2] })],
-        ['node3', undefined, JSON.stringify({ uuid: 'node3', some: 'data', node_type: undefined },)],
-        ['node4', undefined, JSON.stringify({ uuid: 'node4', some: 'data', node_type: undefined },)],
-        ['ui_node_3', 'ui', JSON.stringify({ uuid: 'ui_node_3', node_type: 'ui', type: 'wait', position: [1, 2] })],
-        ['ui_node_4', 'ui', JSON.stringify({ uuid: 'ui_node_4', node_type: 'ui', type: 'other', position: [1, 2] })],
+        ['node1', JSON.stringify({ uuid: 'node1', some: 'data', ui: { type: 'execute', position: [1, 2] } },)],
+        ['node2', JSON.stringify({ uuid: 'node2', some: 'data', ui: { type: 'split', position: [1, 2] } },)],
+        ['node3', JSON.stringify({ uuid: 'node3', some: 'data', ui: { type: 'wait', position: [1, 2] } },)],
+        ['node4', JSON.stringify({ uuid: 'node4', some: 'data', ui: { type: 'other', position: [1, 2] } },)],
       ],
     ]);
   });

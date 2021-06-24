@@ -10,7 +10,7 @@ PostgreSQL 9.6 and greater. The user passed in the postgres url needs to have fu
   - `POSTGRESQL_URL` is the PostgreSQL url
   - `RAPIDPRO_URL` is the url of your RapidPro deployment  
   - `RAPIDPRO_AUTH` is the RapidPro API Token, without the prefix
-3. Run `docker build -t "<version>" .`
+3. Run `docker build -t "<tag>" --build-arg node_version=<node_version> .`
 4. Run `docker-compose up`
 5. Run step 4 for subsequent updates
 
@@ -19,7 +19,7 @@ Currently, the adapter pulls, but not limited to the following data.
 1. Contacts
 2. Messages
 3. Runs
-4. Flows
+4. Flows and definitions
 
 ## How it works
 1. Runs migrations in `/migrations` to create `rapidpro_contacts, rapidpro_messages, rapidpro_runs` tables and corresponding materialized views `useview_*`
@@ -56,4 +56,6 @@ The following RapidPro API end points are helpful to understand the tables and v
 1. [/api/v2/contacts](https://rapidpro.app.medicmobile.org/api/v2/contacts) - to list, create, update or delete contacts
 2. [/api/v2/messages](https://rapidpro.app.medicmobile.org/api/v2/messages) - to list messages
 3. [/api/v2/runs](https://rapidpro.app.medicmobile.org/api/v2/runs) - to list flow runs
+3. [/api/v2/flows](https://rapidpro.app.medicmobile.org/api/v2/flows) - to list flows
+3. [/api/v2/definitions](https://rapidpro.app.medicmobile.org/api/v2/definitions) - to list flow definitions
 

@@ -1,11 +1,12 @@
 ARG node_version
 FROM node:$node_version
 
-WORKDIR /usr/app
+WORKDIR /usr/src
 
-COPY package.json .
-COPY package-lock.json .
+COPY package*.json ./
 
-RUN npm ci
+RUN npm ci --production
 
 COPY . .
+
+CMD [ "node", "bin/index.js" ]

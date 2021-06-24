@@ -1,11 +1,11 @@
 version: '3'
 
 services:
-  nodejs:
-    image: rapidpro-cht:1.0.0
-    container_name: rapidpro-cht
+  rapidpro2pg:
+    image: rapidpro2pg:latest
+    container_name: rapidpro2pg
     environment:
-      - POSTGRESQL_URL='postgres://rapidpro2pg:secret=@localhost:5432/rapidpro2pg'
+      - POSTGRESQL_URL='postgres://postgres:postgrespass=@localhost:5432/rapidpro2pg'
       - RAPIDPRO_URL=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
       - RAPIDPRO_AUTH=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     network_mode: "host"

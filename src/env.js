@@ -30,7 +30,7 @@ const validateEnv = () => {
 };
 
 module.exports = {
-  getRapidProUrl: () => getEnv(RAPIDPRO_URL),
+  getRapidProUrl: () => getEnv(RAPIDPRO_URL).replace(/\/$/, ''),
   getRapidProAuth: () => getEnv(RAPIDPRO_AUTH),
   getPostgresUrl: () => getEnv(POSTGRESQL_URL),
   validateEnv,

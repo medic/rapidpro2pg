@@ -11,11 +11,14 @@ const FLOWS_UPSERT_ST = 'INSERT INTO rapidpro_flows (uuid, doc) VALUES %L ' +
                         'ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc';
 const DEFINITIONS_UPSERT_ST = 'INSERT INTO rapidpro_definitions (uuid, doc) VALUES %L ' +
                               'ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc';
-const NODES_UPSERT_ST = 'INSERT INTO rapidpro_definitions_nodes (uuid, node_type, doc) VALUES %L ' +
+const NODES_UPSERT_ST = 'INSERT INTO rapidpro_definitions_nodes (uuid, doc) VALUES %L ' +
                         'ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc';
 
 const getRecord = (item) => ([ item.uuid, JSON.stringify(item) ]);
-const getNodeRecord = (item) => ([ item.uuid, item.node_type, JSON.stringify(item) ]);
+const getNodeRecord = (node, ui) => {
+  node.ui = ui;
+  return getRecord(node);
+};
 
 const syncDefinitions = async (flows) => {
   const queryString = new URLSearchParams();
@@ -42,12 +45,9 @@ const upsertNodes = async(definitions) => {
   const records = [];
   definitions.forEach(definition => {
     if (Array.isArray(definition.nodes)) {
-      definition.nodes.forEach(node => records.push(getNodeRecord(node)));
-    }
-    if (definition._ui && definition._ui.nodes) {
-      Object.keys(definition._ui.nodes).forEach(uuid => {
-        const node = Object.assign({ uuid, node_type: 'ui' }, definition._ui.nodes[uuid]);
-        records.push(getNodeRecord(node));
+      definition.nodes.forEach(node => {
+        const ui = definition._ui && definition._ui.nodes && definition._ui.nodes[node.uuid];
+        records.push(getNodeRecord(node, ui));
       });
     }
   });
@@ -70,7 +70,7 @@ module.exports = {
     try {
       await utils.sync(FLOWS_ENDPOINT_NAME, upsert);
     } catch (err) {
-      log.error('Error when syncing contacts', err);
+      log.error('Error when syncing flows', err);
       throw err;
     }
   },

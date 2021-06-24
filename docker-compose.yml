@@ -5,7 +5,7 @@ services:
     image: rapidpro2pg:latest
     container_name: rapidpro2pg
     environment:
-      - POSTGRESQL_URL='postgres://postgres:postgrespass=@localhost:5432/rapidpro2pg'
-      - RAPIDPRO_URL=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-      - RAPIDPRO_AUTH=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      - POSTGRESQL_URL=***************************
+      - RAPIDPRO_URL=***************************
+      - RAPIDPRO_AUTH=***************************
     network_mode: "host"

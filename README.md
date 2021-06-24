@@ -10,7 +10,7 @@ PostgreSQL 9.6 and greater. The user passed in the postgres url needs to have fu
   - `POSTGRESQL_URL` is the PostgreSQL url
   - `RAPIDPRO_URL` is the url of your RapidPro deployment  
   - `RAPIDPRO_AUTH` is the RapidPro API Token, without the prefix
-3. Run `docker build -t "<tag>" --build-arg node_version=<node_version> .`
+3. Run `docker build -t rapidpro2pg --build-arg node_version=<node_version> .`
 4. Run `docker-compose up`
 5. Run step 4 for subsequent updates
 

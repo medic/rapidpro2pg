@@ -1,13 +1,26 @@
 const env = require('./env');
 const migrations = require('./migrations');
 const refreshMatViews = require('./refresh-materialized-views');
+const log = require('loglevel');
+
+log.setDefaultLevel('info');
 
 if (!env.validateEnv()) {
   process.exit(1);
   return; // stop execution in tests
 }
 
-// todo usage
+if (process.argv.length > 2 && process.argv[2] == '--usage') {
+  log.info(`
+  USAGE
+  
+  export POSTGRESQL_URL=<PostgreSQL db URL>
+  export RAPIDPRO_URL=<RapidPro instance URL>  
+  export RAPIDPRO_AUTH=<RapidPro authentication token>
+  rapidpro2pg
+  `);
+  process.exit(0);
+}
 
 const syncEndpoints = async() => {
   const endpoints = [

@@ -10,7 +10,7 @@ if (!env.validateEnv()) {
   return; // stop execution in tests
 }
 
-if (process.argv.length > 2 && process.argv[2] == '--usage') {
+if (process.argv.length > 2 && process.argv[2] === '--usage') {
   log.info(`
   USAGE
   

@@ -13,7 +13,7 @@ describe('contacts endpoint sync', () => {
 
   it('should call default sync', async () => {
     sinon.stub(pgUtils, 'upsert').resolves();
-    sinon.stub(utils, 'sync').resolves([{ some: 'result' }]);
+    sinon.stub(utils, 'sync').resolves();
 
     await contactsSync.sync();
 
@@ -49,7 +49,7 @@ describe('contacts endpoint sync', () => {
 
   it('should throw upsert errors', async () => {
     sinon.stub(pgUtils, 'upsert').rejects({ some: 'error' });
-    sinon.stub(utils, 'sync').resolves([{ some: 'result' }]);
+    sinon.stub(utils, 'sync').resolves();
 
     await contactsSync.sync();
 

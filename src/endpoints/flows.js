@@ -20,7 +20,7 @@ const getNodeRecord = (item) => ([ item.uuid, item.node_type, JSON.stringify(ite
 const syncDefinitions = async (flows) => {
   const queryString = new URLSearchParams();
   flows.forEach(flow => flow.uuid && queryString.append('flow', flow.uuid));
-  const definitionsUrl = rapidProUtils.getApiUri(DEFINITIONS_ENDPOINT_NAME, queryString);
+  const definitionsUrl = rapidProUtils.getApiUri(DEFINITIONS_ENDPOINT_NAME, queryString.toString());
   const definitions = await rapidProUtils.get(definitionsUrl);
 
   if (!definitions || !definitions.flows || !definitions.flows.length) {

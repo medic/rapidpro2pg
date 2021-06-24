@@ -6,7 +6,7 @@ const requestsQueue = [];
 
 const app = new express();
 const pathPrefix = '/api/v2/';
-const endpoints = ['contacts', 'messages', 'runs'];
+const endpoints = ['contacts', 'messages', 'runs', 'flows', 'definitions'];
 const defaultResponse = { previous: null, next: null, results: [] };
 
 endpoints.forEach(endpoint => {

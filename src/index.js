@@ -14,6 +14,7 @@ const syncEndpoints = async() => {
     'contacts',
     'messages',
     'runs',
+    'flows',
   ];
 
   for (const endpoint of endpoints) {

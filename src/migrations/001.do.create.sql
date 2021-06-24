@@ -2,6 +2,9 @@ CREATE TABLE IF NOT EXISTS rapidpro_messages (id bigint PRIMARY KEY, doc jsonb);
 CREATE TABLE IF NOT EXISTS rapidpro_contacts (uuid uuid PRIMARY KEY, doc jsonb);
 CREATE TABLE IF NOT EXISTS rapidpro_runs_progress (source VARCHAR PRIMARY KEY, timestamp VARCHAR);
 CREATE TABLE IF NOT EXISTS rapidpro_runs (uuid uuid PRIMARY KEY, doc jsonb);
+CREATE TABLE IF NOT EXISTS rapidpro_flows (uuid uuid PRIMARY KEY, doc jsonb);
+CREATE TABLE IF NOT EXISTS rapidpro_definitions (uuid uuid PRIMARY KEY, doc jsonb);
+CREATE TABLE IF NOT EXISTS rapidpro_definitions_nodes (uuid uuid PRIMARY KEY, node_type VARCHAR, doc jsonb);
 
 ------------------------------------------------------------
 ----------------useview_rapidpro_contacts

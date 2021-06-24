@@ -442,8 +442,8 @@ describe('rapidpro2pg', () => {
           previous: rapidProMockServer.getUrl('runs', '?next2'),
           next: null,
           results: [
-            { uuid: uuid(), edited: true, flow: { uuid: 'flow2', name: 'flow two' }, modified_on: '2020-01-07T12:12:12' },
-            { uuid: uuid(), edited: true, flow: { uuid: 'flow2', name: 'flow two' }, modified_on: '2020-01-04T12:12:12' },
+            { uuid: uuid(), edited: true, flow: { uuid: 'flow2' }, modified_on: '2020-01-07T12:12:12' },
+            { uuid: uuid(), edited: true, flow: { uuid: 'flow2' }, modified_on: '2020-01-04T12:12:12' },
           ],
         });
 

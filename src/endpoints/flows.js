@@ -42,7 +42,7 @@ const upsertNodes = async(definitions) => {
   const records = [];
   definitions.forEach(definition => {
     if (Array.isArray(definition.nodes)) {
-      definition.nodes.forEach(node => records.push(getNodeRecord(node)))
+      definition.nodes.forEach(node => records.push(getNodeRecord(node)));
     }
     if (definition._ui && definition._ui.nodes) {
       Object.keys(definition._ui.nodes).forEach(uuid => {

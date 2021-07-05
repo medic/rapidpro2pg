@@ -5,7 +5,7 @@ const pgUtils = require('../pg-utils');
 
 const ENDPOINT_NAME = 'contacts';
 const UPSERT_ST =
-        `INSERT INTO rapidpro_contacts (uuid, doc) VALUES %L ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc`;
+        'INSERT INTO rapidpro_contacts (uuid, doc) VALUES %L ON CONFLICT(uuid) DO UPDATE SET doc = EXCLUDED.doc';
 
 const upsert = (results) => {
   const records = results.map(result => ([ result.uuid, JSON.stringify(result) ]));

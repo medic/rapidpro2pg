@@ -4,6 +4,7 @@ const log = require('loglevel');
 const env = require('./env');
 
 const run = async () => {
+  log.info('Starting refreshing materialized views');
   const postgresUrl = env.getPostgresUrl();
   const migrator = new Postgrator({
     migrationDirectory: __dirname + '/refresh_matviews',

@@ -57,7 +57,7 @@ const upsertNodes = async(definitions) => {
 
 const upsert = async (results) => {
   if (!Array.isArray(results) || !results.length) {
-    return Promise.resolve();
+    return;
   }
 
   const records = results.map(getRecord);

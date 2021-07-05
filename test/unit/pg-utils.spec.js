@@ -117,7 +117,7 @@ describe('pg-utils', () => {
 
         expect(pgClient.connect.callCount).to.equal(1);
         expect(pgClient.query.callCount).to.equal(0);
-        expect(pgClient.end.callCount).to.equal(0);
+        expect(pgClient.end.callCount).to.equal(1);
       }
     });
 
@@ -146,7 +146,7 @@ describe('pg-utils', () => {
         expect(pgClient.connect.callCount).to.equal(1);
         expect(pgClient.query.callCount).to.equal(1);
         expect(pgClient.query.args[0]).to.deep.equal(['statement']);
-        expect(pgClient.end.callCount).to.equal(0);
+        expect(pgClient.end.callCount).to.equal(1);
       }
     });
   });
@@ -233,7 +233,7 @@ describe('pg-utils', () => {
 
         expect(pgClient.connect.callCount).to.equal(1);
         expect(pgClient.query.callCount).to.equal(0);
-        expect(pgClient.end.callCount).to.equal(0);
+        expect(pgClient.end.callCount).to.equal(1);
       }
     });
 
@@ -258,7 +258,7 @@ describe('pg-utils', () => {
         expect(pgClient.connect.callCount).to.equal(1);
         expect(pgClient.query.callCount).to.equal(1);
         expect(pgClient.query.args[0]).to.deep.equal(['statement']);
-        expect(pgClient.end.callCount).to.equal(0);
+        expect(pgClient.end.callCount).to.equal(1);
       }
     });
   });

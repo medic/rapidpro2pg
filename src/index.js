@@ -41,6 +41,7 @@ const run = async () => {
     await syncEndpoints();
     await refreshMatViews.run();
   } catch (err) {
+    log.error('The synchronisation is aborted due to errors. Please check logs above.');
     process.exit(1);
   }
 };

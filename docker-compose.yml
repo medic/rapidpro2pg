@@ -2,10 +2,31 @@ version: '3'
 
 services:
   rapidpro2pg:
-    image: rapidpro2pg:latest
+    build: .
     container_name: rapidpro2pg
     environment:
-      - POSTGRESQL_URL=***************************
-      - RAPIDPRO_URL=***************************
-      - RAPIDPRO_AUTH=***************************
+      POSTGRESQL_URL: ${POSTGRESQL_URL}
+      RAPIDPRO_URL: ${RAPIDPRO_URL}
+      RAPIDPRO_AUTH: ${RAPIDPRO_AUTH}
     network_mode: "host"
+    command: node /usr/app/bin/index.js
+
+  postgres:
+    image: postgres:9.6
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: $INT_PG_PASS
+      POSTGRES_USER: $INT_PG_USER
+      POSTGRES_DB: $INT_PG_DB
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+  test:
+    build: .
+    volumes:
+      - ./src:/usr/app/src
+      - ./bin:/usr/app/bin
+      - ./tests:/usr/app/tests
+    depends_on:
+      - postgres
+    command: npm test

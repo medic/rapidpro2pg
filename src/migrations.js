@@ -3,7 +3,8 @@ const log = require('loglevel');
 
 const env = require('./env');
 
-const run = () => {
+const run = async () => {
+  log.info('Starting migrations test');
   const postgresUrl = env.getPostgresUrl();
   const migrator = new Postgrator({
     migrationDirectory: __dirname + '/migrations',
@@ -12,6 +13,12 @@ const run = () => {
     schemaTable: 'rapidpro2pg_migrations'
   });
 
+  /*try {
+    return migrator.migrate();
+  } catch (err) {
+    log.error('Error with migrations', err);
+    throw err;
+  }*/
   return migrator
     .migrate()
     .catch(err => {

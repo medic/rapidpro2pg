@@ -6,10 +6,12 @@ const env = require('./env');
 
 const runSQL = async (sql) => {
   const pg = new Client({ connectionString: env.getPostgresUrl() });
-  await pg.connect();
-  const result = await pg.query(sql);
-  await pg.end();
-  return result;
+  try {
+    await pg.connect();
+    return await pg.query(sql);
+  } finally {
+    await pg.end();
+  }
 };
 
 const query = async (stmt, ...args) => {

@@ -13,12 +13,12 @@ const run = async () => {
     schemaTable: 'rapidpro2pg_progress'
   });
 
-  return migrator
-    .migrate()
-    .catch(err => {
-      log.error('Error with refreshing materialized views', err);
-      throw err;
-    });
+  try {
+    return await migrator.migrate();
+  } catch (err) {
+    log.error('Error with migrations', err);
+    throw err;
+  }
 };
 
 module.exports = {

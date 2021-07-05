@@ -13,18 +13,12 @@ const run = async () => {
     schemaTable: 'rapidpro2pg_migrations'
   });
 
-  /*try {
-    return migrator.migrate();
+  try {
+    return await migrator.migrate();
   } catch (err) {
     log.error('Error with migrations', err);
     throw err;
-  }*/
-  return migrator
-    .migrate()
-    .catch(err => {
-      log.error('Error with migrations', err);
-      throw err;
-    });
+  }
 };
 
 module.exports = {

@@ -8,5 +8,3 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-
-#CMD [ "node", "bin/index.js" ]

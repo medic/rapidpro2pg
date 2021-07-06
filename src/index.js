@@ -5,11 +5,6 @@ const log = require('loglevel');
 
 log.setDefaultLevel('info');
 
-if (!env.validateEnv()) {
-  process.exit(1);
-  return; // stop execution in tests
-}
-
 if (process.argv.length > 2 && process.argv[2] === '--usage') {
   log.info(`
   USAGE
@@ -20,6 +15,11 @@ if (process.argv.length > 2 && process.argv[2] === '--usage') {
   rapidpro2pg
   `);
   process.exit(0);
+}
+
+if (!env.validateEnv()) {
+  process.exit(1);
+  return; // stop execution in tests
 }
 
 const syncEndpoints = async() => {

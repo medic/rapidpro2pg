@@ -29,5 +29,5 @@ jobs:
           password: ${{ secrets.CI_DOCKER_PASSWORD }}
         if: steps.get-docker-hub-username.outputs.dockerhub_username
       - uses: actions/checkout@v2
-      - run: docker-compose build --build-arg node_version=${{ matrix.node-version }} test
-      - run: docker-compose run test
+      - run: docker-compose -f test/test-compose.yml build --build-arg node_version=${{ matrix.node-version }}
+      - run: docker-compose -f test/test-compose.yml run test

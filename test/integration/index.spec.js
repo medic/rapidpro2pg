@@ -7,10 +7,10 @@ const logger = require('loglevel');
 const rapidProMockServer = require('./rapidpro-server-mock');
 
 const INT_PG_HOST = process.env.INT_PG_HOST || 'postgres';
-const INT_PG_PORT = process.env.INT_PG_PORT || 5432;
 const INT_PG_USER = process.env.INT_PG_USER || 'postgres';
 const INT_PG_PASS = process.env.INT_PG_PASS || 'postgrespass';
 const INT_PG_DB   = process.env.INT_PG_DB || 'rapidpro2pgtest';
+const INT_PG_PORT = 5432;
 const postgresUrl = `postgres://${INT_PG_USER}:${INT_PG_PASS}@${INT_PG_HOST}:${INT_PG_PORT}/${INT_PG_DB}`;
 
 const env = {

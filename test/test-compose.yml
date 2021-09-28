@@ -3,6 +3,7 @@ version: '3.9'
 services:
   postgres:
     image: postgres:9.6
+    restart: always
     ports:
       - 5432:5432
     environment:
@@ -12,11 +13,11 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
   test:
-    build: .
+    build: ../
     volumes:
-      - ./src:/usr/app/src
-      - ./bin:/usr/app/bin
-      - ./tests:/usr/app/tests
+      - ../src:/usr/app/src
+      - ../bin:/usr/app/bin
+      - ../tests:/usr/app/tests
     depends_on:
       - postgres
     command: npm test

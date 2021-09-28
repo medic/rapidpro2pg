@@ -29,23 +29,24 @@ Currently, the adapter pulls, but not limited to the following data.
 ## Notes/known issues
 1. RapidPro API token refreshes periodically, hence the need for fresh builds for each new token.
 
-## Running tests
 
-Run linting, unit and integration tests with `npm test`.
-Some environment variables that may be required for the integration tests to run correctly:
+## Running tests with docker-compose
+Run linting, unit and integration tests with:
 
+```shell
+docker-compose -f ./test/test-compose.yml up --build --abort-on-container-exit
+```
+
+Some environment variables can be set:
 - `INT_PG_HOST` postgres host, defaults to postgres
-- `INT_PG_PORT` postgres port, defaults to 5432
 - `INT_PG_USER` postgres user, defaults to postgres. This user must be able to create databases on the given host.
 - `INT_PG_PASS` user's password, defaults to none (system default)
 - `INT_PG_DB` test database to use, defaults to `rapidpro2pgtest`
 - `INT_RP_PORT` RapidPro mocked server port, defaults to 6594
 
-NB: the integration tests destroy and re-create the given databases each time they are run. Use test databases.
-
-## Running tests
+Use this command to tear down the containers.
 ```shell
-docker-compose -f ./test-compose.yml up --abort-on-container-exit
+docker-compose -f ./test/test-compose.yml down --volumes
 ```
 
 ## References

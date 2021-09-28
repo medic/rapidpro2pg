@@ -1,10 +1,6 @@
-ARG node_version
+ARG node_version=12
 FROM node:$node_version
-
 WORKDIR /usr/app
-
-COPY package*.json ./
-
-RUN npm ci
-
 COPY . .
+RUN npm ci
+CMD ["node", "/usr/app/bin/index.js"]

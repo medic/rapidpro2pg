@@ -10,9 +10,8 @@ PostgreSQL 9.6 and greater. The user passed in the postgres url needs to have fu
   - `POSTGRESQL_URL` is the PostgreSQL url
   - `RAPIDPRO_URL` is the url of your RapidPro deployment  
   - `RAPIDPRO_AUTH` is the RapidPro API Token, without the prefix
-3. Run `docker-compose build --build-arg node_version=[node version] rapidpro2pg`
-4. Run `docker-compose run rapidpro2pg`
-5. Run step 4 for subsequent updates
+3. Run `docker-compose up`
+4. Run step 3 for subsequent updates
 
 ## RapidPro data
 Currently, the adapter pulls, but not limited to the following data.
@@ -44,17 +43,9 @@ Some environment variables that may be required for the integration tests to run
 
 NB: the integration tests destroy and re-create the given databases each time they are run. Use test databases.
 
-## Running tests through docker-compose
+## Running tests
 ```shell
-docker-compose build --build-arg node_version=[node version] test
-docker-compose run test
-```
-
-### PostgreSQL can be easily installed via Docker, for simpler integration tests:
-```shell
-docker run --name some-postgres -e POSTGRES_PASSWORD=postgrespass -d -p 5442:5432 postgres
-docker exec -it some-postgres psql -U postgres
-create database rapidpro2pgtest;
+docker-compose -f ./test-compose.yml up --abort-on-container-exit
 ```
 
 ## References

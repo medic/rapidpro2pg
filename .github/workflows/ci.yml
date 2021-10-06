@@ -1,0 +1,33 @@
+name: Build rapidpro2pg and run test cases
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Test rapidpro2pg
+    runs-on: ubuntu-18.04
+    env:
+      INT_PG_HOST: postgres
+      INT_PG_PORT: 5432
+      INT_PG_USER: postgres
+      INT_PG_PASS: postgrespass
+      INT_PG_DB: rapidpro2pgtest
+      INT_RP_PORT: 6594
+
+    strategy:
+      matrix:
+        node-version: [8, 10, 12, 14]
+
+    steps:
+      - name: Get Docker Hub username
+        id: get-docker-hub-username
+        run: echo '::set-output name=dockerhub_username::${{ secrets.CI_DOCKER_USERNAME }}'
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.CI_DOCKER_USERNAME }}
+          password: ${{ secrets.CI_DOCKER_PASSWORD }}
+        if: steps.get-docker-hub-username.outputs.dockerhub_username
+      - uses: actions/checkout@v2
+      - run: docker-compose -f test/test-compose.yml build --build-arg node_version=${{ matrix.node-version }}
+      - run: docker-compose -f test/test-compose.yml run test

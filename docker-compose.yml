@@ -1,10 +1,12 @@
-version: '3'
+version: '3.9'
 
 services:
-  nodejs:
-    image: rapidpro-cht:1.0.0
-    container_name: rapidpro-cht
+  rapidpro2pg:
+    build: .
+    container_name: rapidpro2pg
     environment:
-      - pgUrl=postgres://couch2pg:secret=@localhost:5432/db'
-      - rapidProAuth=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      POSTGRESQL_URL: ${POSTGRESQL_URL}
+      RAPIDPRO_URL: ${RAPIDPRO_URL}
+      RAPIDPRO_AUTH: ${RAPIDPRO_AUTH}
     network_mode: "host"
+    command: node /usr/app/bin/index.js

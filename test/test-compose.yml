@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:9.6
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: $INT_PG_PASS
+      POSTGRES_USER: $INT_PG_USER
+      POSTGRES_DB: $INT_PG_DB
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+  test:
+    build: ../
+    depends_on:
+      - postgres
+    command: npm test

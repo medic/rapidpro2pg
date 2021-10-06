@@ -1,0 +1,48 @@
+{
+  "name": "rapidpro2pg",
+  "version": "0.0.1",
+  "description": "Pulls data from RapidPro and makes it available in PostgreSQL for ease of analysis.",
+  "main": "src/index.js",
+  "dependencies": {
+    "loglevel": "^1.7.1",
+    "node-fetch": "^2.6.1",
+    "pg": "^8.6.0",
+    "pg-format": "^1.0.4",
+    "postgrator": "^4.1.1"
+  },
+  "bin": {
+    "rapidpro2pg": "bin/index.js"
+  },
+  "devDependencies": {
+    "@medic/eslint-config": "^1.1.0",
+    "chai": "^4.3.4",
+    "eslint": "^6.8.0",
+    "express": "^4.17.1",
+    "mocha": "^7.2.0",
+    "nyc": "^15.1.0",
+    "rewire": "^5.0.0",
+    "sinon": "^11.1.1",
+    "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "test": "npm run lint && npm run unit && npm run integration",
+    "lint": "./node_modules/.bin/eslint --color ./",
+    "unit": "./node_modules/.bin/nyc --all mocha test/unit --recursive",
+    "integration": "./node_modules/.bin/mocha test/integration"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/medic/rapidpro2pg.git"
+  },
+  "keywords": [
+    "rapidro",
+    "pg",
+    "cht"
+  ],
+  "author": "Medic Mobile",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/medic/rapidpro2pg/issues"
+  },
+  "homepage": "https://github.com/medic/rapidpro2pg#readme"
+}

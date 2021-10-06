@@ -14,10 +14,6 @@ services:
 
   test:
     build: ../
-    volumes:
-      - ../src:/usr/app/src
-      - ../bin:/usr/app/bin
-      - ../tests:/usr/app/tests
     depends_on:
       - postgres
     command: npm test

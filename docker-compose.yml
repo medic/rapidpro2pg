@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   rapidpro2pg:
-    build: .
+    image: medicmobile/rapidpro2pg:main-latest
     container_name: rapidpro2pg
     environment:
       POSTGRESQL_URL: ${POSTGRESQL_URL}

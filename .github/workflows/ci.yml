@@ -19,6 +19,17 @@ jobs:
         node-version: [8, 10, 12, 14]
 
     steps:
+      - uses: actions/checkout@v2
+      - run: docker-compose -f test/test-compose.yml build --build-arg node_version=${{ matrix.node-version }}
+      - run: docker-compose -f test/test-compose.yml run test
+
+  deploy:
+    needs: test
+    name: Build rapidpro2pg and Publish to DockerHub
+    runs-on: ubuntu-18.04
+    env:
+      PUSH_IMAGE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    steps:
       - name: Get Docker Hub username
         id: get-docker-hub-username
         run: echo '::set-output name=dockerhub_username::${{ secrets.CI_DOCKER_USERNAME }}'
@@ -34,12 +45,12 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M-%S')"
 
-      - uses: actions/checkout@v2
-      - run: docker-compose -f test/test-compose.yml build --build-arg node_version=${{ matrix.node-version }}
-      - run: docker-compose -f test/test-compose.yml run test
-
-      - name: Build & Push to DockerHub
-        if: GitHub.ref == 'refs/heads/main' || GitHub.ref == 'refs/heads/first_prod_deploy'
-        run: docker build -t medicmobile/rapidpro2pg:main-${{ steps.date.outputs.date }} .
-        run: docker tag medicmobile/rapidpro2pg:main-${{ steps.date.outputs.date }} medicmobile/rapidpro2pg:main-latest
-        run: docker push medicmobile/rapidpro2pg:main-latest && docker push medicmobile/rapidpro2pg:main-${{ steps.date.outputs.date }}
+      - name: Build Production/Main rapidpro2pg image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: 
+            - medicmobile/rapidpro2pg:main
+            - medicmobile/rapidpro2pg:main-${{ steps.date.outputs.date }}
+        if: fromJSON(env.PUSH_IMAGE)

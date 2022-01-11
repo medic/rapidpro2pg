@@ -28,7 +28,7 @@ jobs:
     name: Build rapidpro2pg and Publish to DockerHub
     runs-on: ubuntu-18.04
     env:
-      PUSH_IMAGE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      PUSH_IMAGE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/first_prod_deploy' }}
     steps:
       - name: Get Docker Hub username
         id: get-docker-hub-username

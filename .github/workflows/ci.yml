@@ -50,7 +50,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: 
-            - medicmobile/rapidpro2pg:main
-            - medicmobile/rapidpro2pg:main-${{ steps.date.outputs.date }}
+          tags: ["medicmobile/rapidpro2pg:main", "medicmobile/rapidpro2pg:main-${{ steps.date.outputs.date }}"]
         if: fromJSON(env.PUSH_IMAGE)

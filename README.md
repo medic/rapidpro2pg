@@ -2,16 +2,35 @@
 Adapter that pulls data from RapidPro and makes it available in PostgreSQL for ease of analysis.
 
 # Required database setup
-PostgreSQL 9.6 and greater. The user passed in the postgres url needs to have full creation rights on the given database.
+PostgreSQL 9.6 and greater. The user passed in the postgres url needs to have full creation rights on the given database. If you are not deploying this container on the same server as your Postgres installation, you will need to have a tunnel from Postgres to your Docker server that is running this container. We recommend setting up an autossh tunnel.
 
-## Getting started
+## Deploying to Production
+
+### Self-Hosted
+
+You can install this directly on your postgres server or a separate docker server and use an autossh tunnel.
+
 1. Clone the repository
 2. Update environment variables and network mode in `docker-compose.yml`
   - `POSTGRESQL_URL` is the PostgreSQL url
   - `RAPIDPRO_URL` is the url of your RapidPro deployment  
   - `RAPIDPRO_AUTH` is the RapidPro API Token, without the prefix
 3. Run `docker-compose up`
-4. Run step 3 for subsequent updates
+
+In order to update rapidpro2pg:
+1. Stop any running rapidpro2pg container: `docker stop rapidpro2pg`
+2. Remove your previous image: `docker rmi medicmobile/rapidpro2pg:main-latest`
+3. Now run through the initial steps of ensuring your environment variables are updated, and run `docker-compose up` in the cloned repository
+
+### Medic Hosted
+
+If requiring a rapidpro2pg deployment for any medic-hosted projects, please open a ticket in medic-infrastructure and place it on the Site Relability Support Dashboard.
+
+SRE will check:
+- Postgres db exists
+- All required credentails (rapidpro & pg) obtained
+SRE will deploy [rapidpro2pg k8s templates](https://github.com/medic/medic-infrastructure/tree/master/kubernetes/deployments/rapidpro2pg)
+
 
 ## RapidPro data
 Currently, the adapter pulls, but not limited to the following data.

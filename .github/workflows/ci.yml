@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   test:
     name: Test rapidpro2pg
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     env:
       INT_PG_HOST: postgres
       INT_PG_PORT: 5432
